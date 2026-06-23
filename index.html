@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>website for my cutie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@700;800&family=Poppins:wght@400;500;600;700;800&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="night">
+  <div class="cursor-trail" id="cursorTrail"></div>
+  <div class="sky" aria-hidden="true">
+    <div class="galaxy"></div>
+    <div class="cloud cloud-a"></div>
+    <div class="cloud cloud-b"></div>
+    <div class="stars"></div>
+    <div class="sparkle-field"></div>
+    <div class="float-layer petals"></div>
+    <div class="float-layer hearts"></div>
+    <div class="float-layer butterflies"></div>
+  </div>
+
+  <section class="intro" id="intro">
+    <div class="intro-loader">
+      <span>Aryan</span>
+      <i>+</i>
+      <span>Shreya</span>
+      <b>❤️</b>
+    </div>
+    <button class="primary-btn" id="enterBtn">Enter Our Story</button>
+  </section>
+
+  <main class="page">
+    <header class="hero section">
+      <nav class="topbar">
+        <strong>Our Story</strong>
+      </nav>
+      <div class="hero-grid">
+        <div class="reveal">
+          <p class="eyebrow">For My Cutie❤️</p>
+          <h1>Forever Starts With Us</h1>
+          <p class="typing" id="typingText"></p>
+          <div class="hero-actions">
+            <a href="#timeline" class="primary-btn">Our Moments</a>
+            <a href="#letter" class="ghost-btn">Open Letter</a>
+          </div>
+        </div>
+        <div class="glass-card hero-card reveal">
+          <div class="crystal-heart" id="crystalHeart"><span>❤</span></div>
+          <p>Tap the heart for a little magic.</p>
+          <strong id="heartMessage">You are my favorite feeling.</strong>
+        </div>
+      </div>
+    </header>
+
+    <section class="section counter-band reveal" id="counter">
+      <h2>Our Time Together</h2>
+      <div class="counter-grid">
+        <div><strong id="years">0</strong><span>Years</span></div>
+        <div><strong id="months">0</strong><span>Months</span></div>
+        <div><strong id="days">0</strong><span>Days</span></div>
+        <div><strong id="hours">0</strong><span>Hours</span></div>
+        <div><strong id="minutes">0</strong><span>Minutes</span></div>
+        <div><strong id="seconds">0</strong><span>Seconds</span></div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="timeline">
+      <h2>Love Story Timeline</h2>
+      <div class="timeline">
+        <article class="reveal"><span>💬</span><h3>First Message</h3><p>The first little notification that became my favorite story.</p></article>
+        <article class="reveal"><span>😂</span><h3>First Joke</h3><p>The moment your laugh started feeling like home.</p></article>
+        <article class="reveal"><span>🌙</span><h3>First Late Night Chat</h3><p>When time disappeared and talking to you felt endless.</p></article>
+        <article class="reveal"><span>📞</span><h3>First Voice Call</h3><p>The day your voice became my favorite sound.</p></article>
+        <article class="reveal"><span>🎵</span><h3>First Song Shared</h3><p>One song, two hearts, and a memory that keeps playing.</p></article>
+        <article class="reveal"><span>💖</span><h3>Today</h3><p>Still choosing you in every message, every call, every quiet thought.</p></article>
+        <article class="reveal"><span>✨</span><h3>One Day We'll Meet</h3><p>The moment I keep dreaming about, waiting for us in real life.</p></article>
+      </div>
+    </section>
+
+    <section class="section gallery-section reveal" id="gallery">
+      <h2>Premium Gallery</h2>
+      <div class="gallery" id="galleryGrid">
+        <button class="photo active tall" data-image="assets/us-pinky-promise.webp" data-caption="Together, even from afar." data-date="❤️ Us"><span>❤️ Us</span><em>Us</em></button>
+        <button class="photo wide" data-image="assets/dream-lake-dance.webp" data-caption="One day, this dream becomes real." data-date="🌙 Dream"><span>🌙 Dream</span><em>Dream</em></button>
+        <button class="photo" data-image="assets/smile-yellow-saree.png" data-caption="My favorite reason to smile." data-date="😊 Smile"><span>😊 Smile</span><em>Smile</em></button>
+        <button class="photo tall" data-image="assets/memory-earphones.webp" data-caption="Some memories live in words." data-date="💖 Memory"><span>💖 Memory</span><em>Memory</em></button>
+        <button class="photo" data-image="assets/home-bench.webp" data-caption="You feel like home." data-date="🏡 Home"><span>🏡 Home</span><em>Home</em></button>
+        <button class="photo wide" data-image="assets/place-field-run.webp" data-caption="A place waiting for us." data-date="🌸 Place"><span>🌸 Place</span><em>Place</em></button>
+      </div>
+      <p class="caption" id="galleryCaption">Click a section to open its photo.</p>
+    </section>
+
+    <section class="section letter-section reveal" id="letter">
+      <h2>Luxury Love Letter</h2>
+      <div class="envelope" id="envelope">
+        <div class="flap"></div>
+        <div class="seal">❤</div>
+        <div class="letter">
+          <h3>My Love,</h3>
+          <p class="write-line">You are the softest part of my life and the brightest part of my future. Every ordinary day becomes beautiful when it has you in it.</p>
+          <p class="write-line">I made this little world for you because you deserve something that feels as special as you make me feel.</p>
+          <strong class="signature">Forever & Always ❤️</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="section memory-book reveal" id="memoryBook">
+      <h2>Memory Book</h2>
+      <div class="book">
+        <button class="book-page active" data-page="1">
+          <em>💬</em>
+          <strong>The Beginning</strong>
+          <span>Every story starts with a single message. Ours started with curiosity and became something unforgettable.</span>
+        </button>
+        <button class="book-page" data-page="2">
+          <em>🌸</em>
+          <strong>Little Moments</strong>
+          <span>It's not about grand adventures. It's about the small conversations that quietly became my favorite part of the day.</span>
+        </button>
+        <button class="book-page playlist-page" data-page="3">
+          <em>🎵</em>
+          <i class="mini-vinyl"></i>
+          <strong>Songs That Feel Like You</strong>
+          <span>Every melody carries a memory, and every lyric reminds me of you.</span>
+        </button>
+        <button class="book-page" data-page="4">
+          <em>🌍</em>
+          <strong>Different Places</strong>
+          <span>Miles may separate us, but they could never measure how close you've become to my heart.</span>
+        </button>
+        <button class="book-page wishes-page" data-page="5">
+          <em>⭐</em>
+          <strong>My Little Wishes</strong>
+          <span class="wish-list">□ Watch the sunset together<br>□ Walk hand in hand<br>□ Laugh over coffee<br>□ Take our first photo<br>□ Create new memories</span>
+        </button>
+        <button class="book-page" data-page="6">
+          <em>❤️</em>
+          <strong>To Be Continued...</strong>
+          <span>The most beautiful pages of our story haven't been written yet.</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="section proposal reveal" id="proposal">
+      <h2>Proposal Scene</h2>
+      <div class="proposal-scene">
+        <div class="moon"></div>
+        <div class="spotlight"></div>
+        <button class="ring-box" id="ringBox" aria-label="Open ring box">
+          <span class="lid"></span>
+          <span class="ring">◇</span>
+        </button>
+        <p id="proposalText">Open the box.</p>
+      </div>
+    </section>
+
+    <section class="ending section reveal" id="ending">
+      <div class="lanterns" aria-hidden="true"><span></span><span></span><span></span></div>
+      <h2 class="ending-title"><span>Forever</span><span>Always</span><span>Aryan ❤️ Shreya</span></h2>
+      <p>Thank you for being my favorite chapter.</p>
+      <p class="footer-line">Every memory here is my favorite place.</p>
+      <button class="primary-btn reason-btn" id="reasonBtn">Reasons I Love You</button>
+    </section>
+  </main>
+
+  <audio id="backgroundMusic" src="sawaal-128-ytshorts.savetube.me.mp3" loop preload="auto" autoplay></audio>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Gallery preview">
+    <button class="icon-btn close" id="closeLightbox" aria-label="Close preview">×</button>
+    <button class="gallery-nav gallery-prev" id="galleryPrev" aria-label="Previous photo">←</button>
+    <figure class="polaroid-memory" id="polaroidMemory">
+      <figcaption class="polaroid-title" id="lightboxTitle">❤️ Us</figcaption>
+      <img class="lightbox-photo" id="lightboxPhoto" alt="Gallery memory" />
+      <figcaption class="polaroid-caption" id="lightboxCaption">Together, even from afar.</figcaption>
+      <div class="gallery-count" id="galleryCount">1 / 6</div>
+    </figure>
+    <button class="gallery-nav gallery-next" id="galleryNext" aria-label="Next photo">→</button>
+  </div>
+
+  <button class="surprise-btn" id="surpriseBtn">✨ One Last Surprise</button>
+  <div class="final-surprise" id="finalSurprise">
+    <h2>No matter where life takes us...</h2>
+    <p>I choose you. Every single day. ❤️</p>
+  </div>
+
+  <div class="reason-toast" id="reasonToast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
