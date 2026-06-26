@@ -248,7 +248,6 @@ function initMusic() {
     music.play().catch(() => {});
   };
 
-  playMusic();
   ["pointerdown", "click", "keydown", "touchstart"].forEach((eventName) => {
     window.addEventListener(eventName, playMusic, { once: true, passive: true });
   });
@@ -423,6 +422,7 @@ $("#enterBtn").addEventListener("click", () => {
   clickSound();
   $("#intro").classList.add("hide");
   typeText();
+  $("#backgroundMusic").play().catch(() => {});
 });
 
 $("#crystalHeart").addEventListener("click", (event) => {
