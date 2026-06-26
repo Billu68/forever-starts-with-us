@@ -243,14 +243,6 @@ function initMusic() {
   const music = $("#backgroundMusic");
   if (!music) return;
   music.volume = 0.35;
-
-  const playMusic = () => {
-    music.play().catch(() => {});
-  };
-
-  ["pointerdown", "click", "keydown", "touchstart"].forEach((eventName) => {
-    window.addEventListener(eventName, playMusic, { once: true, passive: true });
-  });
 }
 
 function initGallery() {
