@@ -245,6 +245,22 @@ function initMusic() {
   music.volume = 0.35;
 }
 
+function preloadGalleryImages() {
+  const imageUrls = [
+    "assets/us-pinky-promise.webp",
+    "assets/dream-lake-dance.webp",
+    "assets/smile-yellow-saree.png",
+    "assets/memory-earphones.webp",
+    "assets/home-bench.webp",
+    "assets/place-field-run.webp"
+  ];
+
+  imageUrls.forEach(url => {
+    const img = new Image();
+    img.src = url;
+  });
+}
+
 function initGallery() {
   const photos = $$(".photo");
   const lightboxPhoto = $("#lightboxPhoto");
@@ -467,6 +483,7 @@ addFloaterStyles();
 createFloaters(".petals", ["🌸", "🌹"], 38);
 createFloaters(".hearts", ["💕", "❤", "💖"], 26);
 createFloaters(".butterflies", ["🦋"], 9);
+preloadGalleryImages();
 initGallery();
 initMusic();
 initCursorTrail();
