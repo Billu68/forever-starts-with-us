@@ -10,6 +10,8 @@ const messages = [
 ];
 let messageIndex = 0;
 let sharedAudioContext;
+const proposalNotificationTopic =
+  "7707b90431824016af72be16a36e3d8c507943471a1e42fb97d8ef7c95ea7e45";
 const lastCounterValues = {};
 const reasons = [
   "I love the way your smile changes my whole day.",
@@ -395,6 +397,24 @@ function showToast(text, long = false) {
     toast.classList.remove("show");
   }, long ? 6200 : 3600);
 }
+async function notifyProposalResponse(answer) {
+  try {
+    const response = await fetch(
+      `https://ntfy.sh/${proposalNotificationTopic}?title=Love%20Story&priority=4`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: `Someone selected ${answer} in your proposal scene.`
+      }
+    );
+
+    if (!response.ok) throw new Error(`Notification failed (${response.status})`);
+    return true;
+  } catch (error) {
+    console.error(`Could not send the ${answer} notification.`, error);
+    return false;
+  }
+}
 
 function initHiddenSurprise() {
   let typed = "";
@@ -452,10 +472,45 @@ $("#ringBox").addEventListener("click", () => {
   playTone("sparkle");
   $("#ringBox").classList.add("open");
   $("#proposalText").textContent = "will u\nstay with me\nforever?";
+  $("#proposalChoices").hidden = false;
   confetti();
+
   const box = $("#ringBox").getBoundingClientRect();
   sparkleAt(box.left + box.width / 2, box.top + box.height / 2, 44);
   createProposalFireflies();
+});
+
+$("#proposalYes").addEventListener("click", () => {
+  playTone("sparkle");
+
+  const choices = $("#proposalChoices");
+  const yesButton = $("#proposalYes");
+  choices.classList.add("answered");
+  yesButton.classList.add("selected");
+  yesButton.disabled = true;
+
+  $("#proposalText").textContent = "You just made me the happiest. ❤️";
+  confetti();
+  sparkleAt(window.innerWidth / 2, window.innerHeight * .72, 64);
+
+  void notifyProposalResponse("Yes").then((sent) => {
+    yesButton.disabled = sent;
+  });
+});
+
+$("#proposalNo").addEventListener("click", async () => {
+  playTone("paper");
+
+  const choices = $("#proposalChoices");
+  const noButton = $("#proposalNo");
+  choices.classList.add("answered");
+  noButton.classList.add("selected");
+  noButton.disabled = true;
+
+  $("#proposalText").textContent = "I hear you. Take your time. ❤️";
+
+  const sent = await notifyProposalResponse("No");
+  noButton.disabled = sent;
 });
 
 $("#reasonBtn").addEventListener("click", () => {

@@ -586,8 +586,11 @@ h3 { margin: 0; font-size: 1.15rem; }
 .ring-box {
   width: min(280px, 70vw);
   aspect-ratio: 1.15;
-  position: relative;
-  margin: 0 auto 1rem;
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
   display: grid;
   place-items: center;
   background: #8d1f4b;
@@ -621,15 +624,47 @@ h3 { margin: 0; font-size: 1.15rem; }
   transition-duration: 1.2s;
   animation: ringSparkle 1.1s ease-in-out infinite alternate 1.2s;
 }
+.proposal-choices {
+  position: absolute;
+  z-index: 3;
+  bottom: 1.5rem;
+  left: 50%;
+  display: flex;
+  justify-content: center;
+  gap: .8rem;
+  transform: translateX(-50%);
+  width: min(100% - 32px, 420px);
+}
+
+.proposal-choices[hidden] { display: none; }
+
+.proposal-choice {
+  min-width: 132px;
+  min-height: 48px;
+  padding: .75rem 1.25rem;
+  border: 1px solid rgba(255,255,255,.72);
+  border-radius: 999px;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 26px rgba(0,0,0,.2);
+}
+
+.proposal-choice.yes { background: linear-gradient(135deg, #ff3d91, #d92171); }
+.proposal-choice.no { background: rgba(255,255,255,.16); }
+.proposal-choices.answered .proposal-choice { display: none; }
+.proposal-choices.answered .proposal-choice.selected { display: inline-block; }
+
 #proposalText {
   position: absolute;
   z-index: 2;
-  bottom: 2rem;
+  bottom: 6rem;
   margin: 0;
   width: min(520px, calc(100% - 32px));
   font: 700 clamp(1.25rem, 4vw, 2.35rem) Poppins, system-ui, sans-serif;
   line-height: 1.25;
   color: white;
+  text-align: center;
   text-shadow: 0 0 24px rgba(255,94,166,.8);
   white-space: pre-line;
 }
@@ -1011,6 +1046,9 @@ input[type="range"] { width: 100%; accent-color: var(--rose); }
   .book { grid-template-columns: 1fr; }
   .book-page { min-height: 180px; }
   .proposal-scene { min-height: 440px; }
+  .ring-box { top: 1rem; width: min(220px, 62vw); }
+  #proposalText { bottom: 5.5rem; }
+  .proposal-choices { bottom: 1.2rem; }
   .music-player { grid-template-columns: 42px 1fr 44px; }
   #volume { display: none; }
   .lightbox { padding: 1rem; }
