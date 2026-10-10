@@ -1,3 +1,5 @@
+/* Gallery Image Optimization - Performance Enhancements */
+
 .lightbox-photo {
   display: block;
   max-width: 90%;
@@ -9,18 +11,216 @@
   box-shadow:
     0 0 30px rgba(255, 105, 180, .25),
     0 20px 50px rgba(0, 0, 0, .35);
-  will-change: opacity;
-  transition: opacity 0.3s ease;
+  
+  /* Performance optimizations */
+  will-change: opacity, transform;
+  transform: translateZ(0); /* Enable GPU acceleration */
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  -webkit-transform: translate3d(0, 0, 0); /* Force hardware acceleration on iOS */
+  
+  /* Smooth loading transition */
+  transition: opacity 0.3s ease, transform 0.3s ease;
   animation: imageLoad 0.4s ease;
+  
+  /* Image rendering optimization */
+  image-rendering: -webkit-optimize-contrast;
+  contain: layout style paint; /* CSS containment for performance */
 }
 
+/* Fast load animation - minimal paint operations */
 @keyframes imageLoad {
   from {
     opacity: 0;
-    transform: scale(0.98);
+    transform: scale3d(0.98, 0.98, 1);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+/* Gallery grid optimization */
+.gallery {
+  columns: 3 220px;
+  column-gap: .9rem;
+  /* Prevent layout thrashing */
+  contain: layout;
+}
+
+/* Photo button optimization */
+.photo {
+  width: 100%;
+  min-height: 220px;
+  margin: 0 0 .9rem;
+  break-inside: avoid;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+  background:
+    radial-gradient(circle at 74% 24%, rgba(255,255,255,.74), transparent 0 8%, transparent 13%),
+    linear-gradient(135deg, rgba(255, 66, 138, .86), rgba(255, 210, 232, .72)),
+    repeating-linear-gradient(45deg, rgba(255,255,255,.25) 0 14px, transparent 14px 28px);
+  box-shadow: var(--shadow);
+  
+  /* Smooth interactions */
+  transition: transform 0.25s ease, filter 0.25s ease;
+  
+  /* Performance */
+  will-change: transform;
+  transform: translateZ(0);
+  contain: content;
+}
+
+.photo:hover, .photo.active {
+  transform: scale3d(1.025, 1.025, 1);
+  filter: saturate(1.18);
+}
+
+/* Lightbox optimization */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: none;
+  place-items: center;
+  padding: 2rem;
+  background: rgba(0, 0, 0, .88);
+  backdrop-filter: blur(15px);
+  opacity: 0;
+  
+  /* Prevent repaints */
+  will-change: opacity;
+  contain: layout style;
+}
+
+.lightbox.open {
+  display: grid;
+  animation: modalFade 350ms ease forwards;
+}
+
+/* Polaroid memory container optimization */
+.polaroid-memory {
+  width: min(980px, 94vw);
+  max-height: 90vh;
+  margin: 0;
+  display: grid;
+  justify-items: center;
+  gap: .55rem;
+  padding: clamp(.9rem, 1.7vw, 1.35rem);
+  border-radius: 8px;
+  color: #4b1630;
+  background: linear-gradient(145deg, #fffaf5, #ffe3ef);
+  box-shadow: 0 30px 90px rgba(0,0,0,.5);
+  
+  /* Optimize rendering */
+  transform: scale(.92) translateZ(0);
+  backface-visibility: hidden;
+  opacity: 0;
+  will-change: transform, opacity;
+  contain: layout style paint;
+}
+
+.lightbox.open .polaroid-memory {
+  animation: polaroidOpen 350ms ease forwards;
+}
+
+/* Gallery navigation buttons */
+.gallery-nav {
+  position: fixed;
+  top: 50%;
+  z-index: 22;
+  width: 54px;
+  height: 54px;
+  border: 1px solid rgba(255,255,255,.36);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: white;
+  background: rgba(255,255,255,.12);
+  backdrop-filter: blur(12px);
+  font-size: 1.8rem;
+  cursor: pointer;
+  transform: translateY(-50%) translateZ(0);
+  transition: box-shadow .25s ease, background .25s ease, transform .25s ease;
+  
+  /* Optimization */
+  will-change: background, box-shadow;
+  contain: layout;
+}
+
+.gallery-nav:hover {
+  background: rgba(255, 105, 180, .22);
+  box-shadow: 0 0 24px rgba(255, 105, 180, .55), 0 10px 30px rgba(0, 0, 0, .24);
+}
+
+/* Modal fade animation - optimized */
+@keyframes modalFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Polaroid open animation - optimized */
+@keyframes polaroidOpen {
+  from {
+    transform: scale(.92) translateZ(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateZ(0);
+    opacity: 1;
+  }
+}
+
+/* Reduce motion for users with accessibility needs */
+@media (prefers-reduced-motion: reduce) {
+  .lightbox-photo,
+  .photo,
+  .gallery-nav,
+  .polaroid-memory {
+    transition: none;
+    animation: none;
+    will-change: auto;
+  }
+}
+
+/* Mobile optimization */
+@media (max-width: 768px) {
+  .lightbox-photo {
+    max-height: 70vh;
+  }
+  
+  .polaroid-memory {
+    transform: scale(0.95) translateZ(0);
+  }
+  
+  .gallery {
+    columns: 2 150px;
+    column-gap: .6rem;
+  }
+  
+  .photo {
+    min-height: 180px;
+    margin: 0 0 .6rem;
+  }
+  
+  .gallery-nav {
+    width: 48px;
+    height: 48px;
+    font-size: 1.5rem;
+  }
+}
+
+/* Connection-aware loading */
+@media (prefers-reduced-data: reduce) {
+  .lightbox-photo,
+  .photo {
+    transition: none;
+  }
+  
+  .polaroid-memory {
+    animation: none;
   }
 }
