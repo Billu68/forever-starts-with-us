@@ -249,7 +249,7 @@ function preloadGalleryImages() {
   const imageUrls = [
     "assets/us-pinky-promise.webp",
     "assets/dream-lake-dance.webp",
-    "assets/smile-yellow-saree.png",
+    "assets/smile-yellow-saree.webp",
     "assets/memory-earphones.webp",
     "assets/home-bench.webp",
     "assets/place-field-run.webp"
