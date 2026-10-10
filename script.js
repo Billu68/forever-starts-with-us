@@ -116,6 +116,9 @@ const reasons = [
   "I'll love you tomorrow."
 ];
 
+// Image cache for instant loading
+const imageCache = new Map();
+
 function audioCtx() {
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   if (!AudioContext) return null;
@@ -247,7 +250,7 @@ function initMusic() {
   music.volume = 0.35;
 }
 
-// Optimized gallery image preloading with lazy loading
+// Ultra-optimized image preloading with caching
 function preloadGalleryImages() {
   const imageUrls = [
     "assets/us-pinky-promise.webp",
@@ -258,25 +261,32 @@ function preloadGalleryImages() {
     "assets/place-field-run.webp"
   ];
 
-  // Create an invisible container for preloading
-  const preloadContainer = document.createElement("div");
-  preloadContainer.style.display = "none";
-  document.body.appendChild(preloadContainer);
-
-  // Preload images with requestIdleCallback for non-blocking loading
+  // Preload all images into memory cache immediately
   imageUrls.forEach((url, index) => {
-    const loadImage = () => {
-      const img = new Image();
-      img.decoding = "async"; // Enable async decoding
-      img.src = url;
-      preloadContainer.appendChild(img);
-    };
-
     if ("requestIdleCallback" in window) {
-      requestIdleCallback(loadImage, { timeout: 2000 });
+      requestIdleCallback(() => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.responseType = "blob";
+        xhr.onload = () => {
+          const blob = xhr.response;
+          const objectUrl = URL.createObjectURL(blob);
+          imageCache.set(url, objectUrl);
+        };
+        xhr.send();
+      });
     } else {
-      // Fallback for older browsers
-      setTimeout(loadImage, index * 200);
+      setTimeout(() => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.responseType = "blob";
+        xhr.onload = () => {
+          const blob = xhr.response;
+          const objectUrl = URL.createObjectURL(blob);
+          imageCache.set(url, objectUrl);
+        };
+        xhr.send();
+      }, index * 100);
     }
   });
 }
@@ -288,39 +298,49 @@ function initGallery() {
   const lightboxCaption = $("#lightboxCaption");
   const galleryCount = $("#galleryCount");
   let currentIndex = 0;
-  let isLoadingImage = false;
+  let isTransitioning = false;
 
   const openPhoto = (index) => {
-    if (isLoadingImage) return;
+    if (isTransitioning) return;
     
     currentIndex = (index + photos.length) % photos.length;
     const photo = photos[currentIndex];
+    const imageUrl = photo.dataset.image;
+    
+    // Prevent double-click transitions
+    isTransitioning = true;
+    
     photos.forEach((p) => p.classList.remove("active"));
     photo.classList.add("active");
-    
-    // Show loading state
-    isLoadingImage = true;
-    lightboxPhoto.style.opacity = "0.6";
-    
-    // Load image with fallback
-    const img = new Image();
-    img.decoding = "async";
-    
-    img.onload = () => {
-      lightboxPhoto.src = photo.dataset.image;
-      lightboxPhoto.alt = photo.dataset.date;
+
+    // Instantly use cached image if available, otherwise fetch
+    if (imageCache.has(imageUrl)) {
+      // Cached - instant display
+      lightboxPhoto.src = imageCache.get(imageUrl);
       lightboxPhoto.style.opacity = "1";
-      isLoadingImage = false;
-    };
+      isTransitioning = false;
+    } else {
+      // Fallback: load normally but with optimizations
+      const img = new Image();
+      img.decoding = "async";
+      
+      img.onload = () => {
+        lightboxPhoto.src = imageUrl;
+        lightboxPhoto.style.opacity = "1";
+        isTransitioning = false;
+      };
+      
+      img.onerror = () => {
+        console.error(`Failed to load: ${imageUrl}`);
+        isTransitioning = false;
+      };
+      
+      // Start loading immediately
+      lightboxPhoto.style.opacity = "0.95";
+      img.src = imageUrl;
+    }
     
-    img.onerror = () => {
-      console.error(`Failed to load image: ${photo.dataset.image}`);
-      isLoadingImage = false;
-      lightboxPhoto.style.opacity = "1";
-    };
-    
-    img.src = photo.dataset.image;
-    
+    lightboxPhoto.alt = photo.dataset.date;
     lightboxTitle.textContent = photo.dataset.date;
     lightboxCaption.textContent = photo.dataset.caption;
     galleryCount.textContent = `${currentIndex + 1} / ${photos.length}`;
@@ -328,33 +348,72 @@ function initGallery() {
     burstModalHearts();
   };
 
+  // Preload adjacent images on gallery open
+  const preloadAdjacentImages = () => {
+    for (let i = -1; i <= 1; i++) {
+      const idx = (currentIndex + i + photos.length) % photos.length;
+      const adjacentUrl = photos[idx].dataset.image;
+      
+      if (!imageCache.has(adjacentUrl)) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", adjacentUrl, true);
+        xhr.responseType = "blob";
+        xhr.onload = () => {
+          const blob = xhr.response;
+          const objectUrl = URL.createObjectURL(blob);
+          imageCache.set(adjacentUrl, objectUrl);
+        };
+        xhr.send();
+      }
+    }
+  };
+
   photos.forEach((photo, index) => {
     photo.addEventListener("click", () => {
       clickSound();
       openPhoto(index);
+      preloadAdjacentImages();
     });
   });
   
-  $("#closeLightbox").addEventListener("click", () => $("#lightbox").classList.remove("open"));
-  $("#lightbox").addEventListener("click", (event) => {
-    if (event.target.id === "lightbox") $("#lightbox").classList.remove("open");
+  $("#closeLightbox").addEventListener("click", () => {
+    $("#lightbox").classList.remove("open");
+    isTransitioning = false;
   });
+  
+  $("#lightbox").addEventListener("click", (event) => {
+    if (event.target.id === "lightbox") {
+      $("#lightbox").classList.remove("open");
+      isTransitioning = false;
+    }
+  });
+  
   $("#galleryPrev").addEventListener("click", (event) => {
     event.stopPropagation();
-    clickSound();
-    openPhoto(currentIndex - 1);
+    if (!isTransitioning) {
+      clickSound();
+      openPhoto(currentIndex - 1);
+      preloadAdjacentImages();
+    }
   });
+  
   $("#galleryNext").addEventListener("click", (event) => {
     event.stopPropagation();
-    clickSound();
-    openPhoto(currentIndex + 1);
+    if (!isTransitioning) {
+      clickSound();
+      openPhoto(currentIndex + 1);
+      preloadAdjacentImages();
+    }
   });
   
   window.addEventListener("keydown", (event) => {
     if (!$("#lightbox").classList.contains("open")) return;
-    if (event.key === "Escape") $("#lightbox").classList.remove("open");
-    if (event.key === "ArrowLeft") openPhoto(currentIndex - 1);
-    if (event.key === "ArrowRight") openPhoto(currentIndex + 1);
+    if (event.key === "Escape") {
+      $("#lightbox").classList.remove("open");
+      isTransitioning = false;
+    }
+    if (event.key === "ArrowLeft" && !isTransitioning) openPhoto(currentIndex - 1);
+    if (event.key === "ArrowRight" && !isTransitioning) openPhoto(currentIndex + 1);
   });
 }
 
@@ -442,6 +501,7 @@ function showToast(text, long = false) {
     toast.classList.remove("show");
   }, long ? 6200 : 3600);
 }
+
 async function notifyProposalResponse(answer) {
   try {
     const response = await fetch(
