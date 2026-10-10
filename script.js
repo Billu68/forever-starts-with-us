@@ -247,6 +247,7 @@ function initMusic() {
   music.volume = 0.35;
 }
 
+// Optimized gallery image preloading with lazy loading
 function preloadGalleryImages() {
   const imageUrls = [
     "assets/us-pinky-promise.webp",
@@ -257,9 +258,26 @@ function preloadGalleryImages() {
     "assets/place-field-run.webp"
   ];
 
-  imageUrls.forEach(url => {
-    const img = new Image();
-    img.src = url;
+  // Create an invisible container for preloading
+  const preloadContainer = document.createElement("div");
+  preloadContainer.style.display = "none";
+  document.body.appendChild(preloadContainer);
+
+  // Preload images with requestIdleCallback for non-blocking loading
+  imageUrls.forEach((url, index) => {
+    const loadImage = () => {
+      const img = new Image();
+      img.decoding = "async"; // Enable async decoding
+      img.src = url;
+      preloadContainer.appendChild(img);
+    };
+
+    if ("requestIdleCallback" in window) {
+      requestIdleCallback(loadImage, { timeout: 2000 });
+    } else {
+      // Fallback for older browsers
+      setTimeout(loadImage, index * 200);
+    }
   });
 }
 
@@ -270,14 +288,39 @@ function initGallery() {
   const lightboxCaption = $("#lightboxCaption");
   const galleryCount = $("#galleryCount");
   let currentIndex = 0;
+  let isLoadingImage = false;
 
   const openPhoto = (index) => {
+    if (isLoadingImage) return;
+    
     currentIndex = (index + photos.length) % photos.length;
     const photo = photos[currentIndex];
     photos.forEach((p) => p.classList.remove("active"));
     photo.classList.add("active");
-    lightboxPhoto.src = photo.dataset.image;
-    lightboxPhoto.alt = photo.dataset.date;
+    
+    // Show loading state
+    isLoadingImage = true;
+    lightboxPhoto.style.opacity = "0.6";
+    
+    // Load image with fallback
+    const img = new Image();
+    img.decoding = "async";
+    
+    img.onload = () => {
+      lightboxPhoto.src = photo.dataset.image;
+      lightboxPhoto.alt = photo.dataset.date;
+      lightboxPhoto.style.opacity = "1";
+      isLoadingImage = false;
+    };
+    
+    img.onerror = () => {
+      console.error(`Failed to load image: ${photo.dataset.image}`);
+      isLoadingImage = false;
+      lightboxPhoto.style.opacity = "1";
+    };
+    
+    img.src = photo.dataset.image;
+    
     lightboxTitle.textContent = photo.dataset.date;
     lightboxCaption.textContent = photo.dataset.caption;
     galleryCount.textContent = `${currentIndex + 1} / ${photos.length}`;
@@ -291,6 +334,7 @@ function initGallery() {
       openPhoto(index);
     });
   });
+  
   $("#closeLightbox").addEventListener("click", () => $("#lightbox").classList.remove("open"));
   $("#lightbox").addEventListener("click", (event) => {
     if (event.target.id === "lightbox") $("#lightbox").classList.remove("open");
@@ -305,6 +349,7 @@ function initGallery() {
     clickSound();
     openPhoto(currentIndex + 1);
   });
+  
   window.addEventListener("keydown", (event) => {
     if (!$("#lightbox").classList.contains("open")) return;
     if (event.key === "Escape") $("#lightbox").classList.remove("open");
